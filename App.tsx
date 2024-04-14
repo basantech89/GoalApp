@@ -1,118 +1,73 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import { View, StyleSheet, FlatList, Button } from 'react-native';
+import React, { useState } from 'react';
+import GoalItem from './components/GoalItem';
+import GoalInput from './components/GoalInput';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [goals, setGoals] = useState<Array<{ text: string; id: string }>>([]);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  function addGoalHandler(goalText: string) {
+    setGoals(currentGoals => [
+      ...currentGoals,
+      { text: goalText, id: Math.random().toString() }
+    ]);
+    setModalIsVisible(false);
+  }
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  function deleteGoalHandler(id: string) {
+    setGoals(currentGoals => currentGoals.filter(goal => goal.id !== id));
+  }
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  function startAddGoalHandler() {
+    setModalIsVisible(true);
+  }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  function endAddGoalHandler() {
+    setModalIsVisible(false);
+  }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <>
+      <View style={styles.appContainer}>
+        <Button
+          title="Add New Goal"
+          color="#a065ec"
+          onPress={startAddGoalHandler}
+        />
+        <GoalInput
+          visible={modalIsVisible}
+          onAddGoal={addGoalHandler}
+          onCancel={endAddGoalHandler}
+        />
+        <View style={styles.goalsContainer}>
+          <FlatList
+            data={goals}
+            renderItem={itemData => (
+              <GoalItem
+                id={itemData.item.id}
+                text={itemData.item.text}
+                onDeleteItem={deleteGoalHandler}
+              />
+            )}
+            keyExtractor={(item, index) => item.id}
+          />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  appContainer: {
+    paddingTop: 50,
+    paddingHorizontal: 16,
+    flex: 1,
+    backgroundColor: '#1e085a'
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  goalsContainer: {
+    flex: 5
+  }
 });
 
 export default App;

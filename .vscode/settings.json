@@ -1,0 +1,10 @@
+{
+  "prettier.configPath": "",
+  "reactSnippets.settings.prettierEnabled": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "modifications",
+  "editor.formatOnPaste": true,
+  "eslint.debug": true,
+  "prettier.prettierPath": ""
+}
